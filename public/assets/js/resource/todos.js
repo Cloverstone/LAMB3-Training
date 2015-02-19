@@ -19,10 +19,11 @@ todosView = Backbone.View.extend({
 	add: function() {
 		this.form({ model: new todoModel(), legend: '<i class="fa fa-check-square-o"></i> Add Todo'}).on('completed', function(){
 			if(this.closeAction === 'save'){
+				this.options.model.save();
 				myTodos.add(this.options.model);
 				new todoView({model: this.options.model});
 			}
-		} );
+		});
 	},
 	template: 'todos' ,
 	onShow: function() {
