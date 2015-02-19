@@ -1,4 +1,6 @@
 alert = function(value){ console.log(value); };
+
+/* Render templates - abstract for different renderings*/
 function render(template, data){
 	if(typeof templates[template] === 'undefined'){
 		templates[template] =  Hogan.compile($('#'+template).html());
@@ -6,8 +8,8 @@ function render(template, data){
   return templates[template].render(data, templates);
 }
 
+/* Based on Marrionette  -  needs work, ignore for now*/
 $(function(){
-
 
 	contentManager = new RegionManager();
 	sidebarManager = new RegionManager({el: '#sidebar'});
@@ -146,13 +148,18 @@ RegionManager = function(defaults) {
 		
 	};
 };
+/* End Based on Marrionette*/
 
+/*extends Backbone view prototype*/
 $(function() {
 	Backbone.View.prototype.close = function() {
 		this.remove();
 		this.unbind();
 		if (this.onClose){
 			this.onClose();
+		}
+		if(this.berry){
+			this.berry.destroy();
 		}
 	};
 	Backbone.View.prototype.form = function(options) {
@@ -167,65 +174,4 @@ $(function() {
 			this.remove();
 		}, this));
 	};
-	Backbone.Model.prototype.alert = function(keys) {
-		$.gritter.add(
-			$.extend(
-				{title: 'Success!', text: 'Successfully updated' + this.model.attributes['name'], timeout: 3000, color: "#5F895F", icon: "fa fa-user"},
-				(this.alert || {})
-			)
-		);
-	};
-	Backbone.Model.prototype.fields = function(keys) {
-		return containsKey(this.schema,keys);
-	};
-	Backbone.View.prototype.autoElement = function(options) {
-		options = $.extend({append: true}, options);
-		this.setElement(render(this.template, this.model.attributes ));
-		this.model.on('change', $.proxy(function() {
-			// var temp = this.$el;
-			// this.setElement(ich[this.template]( this.model.attributes ));
-			// temp.replaceWith(this.$el);
-			this.$el.replaceWith(this.setElement(render(this.template, this.model.attributes )).$el);
-			this.render()
-			this.editing = false;
-		}), this);
-		if(options.append !== false){
-			$(this.target).append(this.$el);
-		}
-	};
-	Backbone.View.prototype.autoAdd = function(options) {
-		this.collection.on('add', $.proxy(function(){ contentManager.show( new this.constructor({ collection: this.collection }))}, this) );
-	};
-
-
-	Backbone.ItemView = Backbone.View.extend({
-		initialize: function() {
-			this.autoElement();
-		},
-		edit: function(e) {
-			e.stopPropagation();
-			this.form();
-		}
-	});
-
-	Backbone.ListView = Backbone.View.extend({
-		add: function() {
-			$().berry({context: this, legend: this.legend, model: new this.collection.model(), fields: this.fields}).on('completed', function(){
-				if(this.closeAction === 'save'){
-					this.options.context.collection.add(this.options.model);
-					new this.options.context.modelView({'model': this.options.model});
-				}
-			});
-		},
-		onShow: function() {
-			_.each(this.collection.models, function(model) {
-				new this.modelView({'model': model});
-			}, this);
-		},
-		initialize: function() {
-			this.fields = this.fields || this.modelView.prototype.fields;
-			this.setElement(render(this.template, this.collection ));
-		},
-	});
-
 });

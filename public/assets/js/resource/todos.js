@@ -55,7 +55,7 @@ todoView = Backbone.View.extend({
 	},
 	toggle: function(e) {
 		e.stopPropagation();
-		this.model.save({completed: !this.model.attributes.completed},{wait: true, patch: true});
+		this.model.save({completed: !this.model.attributes.completed}, {wait: true, patch: true});
 	},
 	edit: function(e) {
 		e.stopPropagation();
@@ -68,7 +68,6 @@ todoView = Backbone.View.extend({
 		this.model.on('change', $.proxy(function() {
 			this.$el.replaceWith(this.setElement(render(this.template, this.model.attributes )).$el);
 			this.render()
-			this.editing = false;
 		}), this);
 		$(this.target).append(this.$el);
 	}
