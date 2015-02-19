@@ -17,7 +17,7 @@ todosView = Backbone.View.extend({
 		'click .add': 'add'
 	},
 	add: function() {
-		this.form({ model: new todoModel(), legend: '<i class="fa fa-check-square-o"></i> Edit Todo'}).on('completed', function(){
+		this.form({ model: new todoModel(), legend: '<i class="fa fa-check-square-o"></i> Add Todo'}).on('completed', function(){
 			if(this.closeAction === 'save'){
 				myTodos.add(this.options.model);
 				new todoView({model: this.options.model});
